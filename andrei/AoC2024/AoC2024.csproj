@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Inputs\Day01.txt" />
+    <None Remove="Inputs\Day02.txt" />
+    <None Remove="Inputs\Day03.txt" />
+    <None Remove="Inputs\Day04.txt" />
+    <None Remove="Inputs\Day05.txt" />
+    <None Remove="Inputs\Day06.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Inputs\Day06.txt" />
+    <EmbeddedResource Include="Inputs\Day05.txt" />
+    <EmbeddedResource Include="Inputs\Day04.txt" />
+    <EmbeddedResource Include="Inputs\Day03.txt" />
+    <EmbeddedResource Include="Inputs\Day02.txt" />
+    <EmbeddedResource Include="Inputs\Day01.txt" />
+  </ItemGroup>
+
+</Project>
