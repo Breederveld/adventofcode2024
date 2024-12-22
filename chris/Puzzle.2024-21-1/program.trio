@@ -1,0 +1,80 @@
+id:@p:test:r:2ef94699-05a3e89c "aoc_21_1"
+func
+src:
+  () => do
+    codes: ioReadStr(`io/input.txt`).trim().split("\n");
+    dirPadMoves: {
+      a: { u: "l" , r: "d" },
+      l: { d: "r" },
+      d: { l: "l" , u: "u" , r: "r" },
+      u: { d: "d" , a: "r" },
+      r: { d: "l" , a: "u" }};
+    numPadMoves: {
+      a: { n0: "l" , n3: "u" },
+      n0: { a: "r" , n2: "u" },
+      n1: { n2: "r" , n4: "u" },
+      n2: { n0: "d" , n1: "l" , n3: "r" , n5: "u" },
+      n3: { a: "d" , n2: "l" , n6: "u" },
+      n4: { n1: "d" , n5: "r" , n7: "u" },
+      n5: { n2: "d" , n4: "l" , n6: "r" , n8: "u" },
+      n6: { n3: "d" , n5: "l" , n9: "u" },
+      n7: { n4: "d" , n8: "r" },
+      n8: { n5: "d" , n7: "l" , n9: "r" },
+      n9: { n6: "d" , n8: "l" }};
+  
+    dfs: (shortest, moves, stepCost, node, prevMove, cost) => do
+      pressCost: cost + stepCost(prevMove, "a");
+      if (shortest[node] != null and shortest[node] <= cost) do
+        return shortest;
+      end;
+      if (shortest[node] == null or shortest[node] > pressCost) do
+        shortest = shortest.set(node, pressCost);
+      end;
+      shortest = moves[node].names().fold((next, acc) => do
+        if (next == foldStart()) do
+          shortest;
+        end else if (next == foldEnd()) do
+          acc;
+        end else do
+          move: moves[node][next];
+          acc = dfs(acc, moves, stepCost, next, move, cost + stepCost(prevMove, move));
+        end;
+      end);
+      shortest;
+    end;
+  
+    dirPadCost: {};
+    dirPadMoves.names().each(start => do
+      dirPadCost = dirPadCost.set(start, dfs({}, dirPadMoves, (l, r) => 1, start, "a", 0));
+    end);
+  
+    dfs({}, dirPadMoves, (l, r) => dirPadCost[l][r], "a", "a", 0);
+    //return dirPadCost;
+    [1].each(i => do
+      dirPadCostNew: {};
+      dirPadMoves.names().each(start => do
+        dirPadCostNew = dirPadCostNew.set(start, dfs({}, dirPadMoves, (l, r) => dirPadCost[l][r], start, "a", 0));
+      end);
+      dirPadCost = dirPadCostNew;
+    end);
+  
+    numPadCost: {};
+    numPadMoves.names().each(start => do
+      numPadCost = numPadCost.set(start, dfs({}, numPadMoves, (l, r) => dirPadCost[l][r], start, "a", 0));
+    end);
+  
+    complexity: (code) => do
+      num: reFindAll(r"\d+", code).concat("").parseNumber();
+      last: "a";
+      len: 0;
+      reFindAll(r".", code).each(c => do
+        key: if (c == "A") "a" else "n" + c;
+        len = len + numPadCost[last][key];
+        last = key;
+      end);
+      num * len;
+    end;
+  
+    codes.map(code => complexity(code)).fold(sum);
+  end
+name:aoc_21_1
